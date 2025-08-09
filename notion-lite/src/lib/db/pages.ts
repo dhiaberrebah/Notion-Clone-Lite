@@ -1,5 +1,5 @@
-import { cookies } from 'next/headers';
-import { createServerComponentClient, createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { createSupabaseServerClient, createSupabaseActionClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 
 export type PageRow = {
   id: string;
@@ -14,13 +14,13 @@ export type PageRow = {
 };
 
 export async function getCurrentUserId() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();
   return data.user?.id ?? null;
 }
 
 export async function listRootPages(): Promise<PageRow[]> {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createSupabaseServerClient();
   const userId = await getCurrentUserId();
   if (!userId) return [];
   const { data, error } = await supabase
@@ -33,7 +33,7 @@ export async function listRootPages(): Promise<PageRow[]> {
 }
 
 export async function getPageById(id: string): Promise<PageRow | null> {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('pages')
     .select('*')
@@ -44,7 +44,7 @@ export async function getPageById(id: string): Promise<PageRow | null> {
 }
 
 export async function listChildren(parentId: string): Promise<PageRow[]> {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('pages')
     .select('*')
@@ -55,9 +55,11 @@ export async function listChildren(parentId: string): Promise<PageRow[]> {
 }
 
 export async function createPage(input: { title: string; parentId?: string | null }): Promise<PageRow | null> {
-  const supabase = createServerActionClient({ cookies });
-  const userId = await getCurrentUserId();
-  if (!userId) throw new Error('Not authenticated');
+  // Use Action client so Supabase auth can write/refresh cookies during POST
+  const supabase = await createSupabaseActionClient();
+  const { data: auth } = await supabase.auth.getUser();
+  const userId = auth.user?.id ?? null;
+  if (!userId) redirect('/sign-in');
   const { data, error } = await supabase
     .from('pages')
     .insert({
@@ -73,7 +75,7 @@ export async function createPage(input: { title: string; parentId?: string | nul
 }
 
 export async function updatePage(id: string, patch: Partial<Pick<PageRow, 'title' | 'content' | 'is_public' | 'slug' | 'parent_id'>>): Promise<PageRow | null> {
-  const supabase = createServerActionClient({ cookies });
+  const supabase = await createSupabaseActionClient();
   const { data, error } = await supabase
     .from('pages')
     .update(patch)
@@ -85,7 +87,7 @@ export async function updatePage(id: string, patch: Partial<Pick<PageRow, 'title
 }
 
 export async function deletePage(id: string): Promise<void> {
-  const supabase = createServerActionClient({ cookies });
+  const supabase = await createSupabaseActionClient();
   const { error } = await supabase
     .from('pages')
     .delete()

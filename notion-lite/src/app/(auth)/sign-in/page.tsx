@@ -35,15 +35,15 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
-      <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4">
-        <h1 className="text-2xl font-semibold">Sign in</h1>
+      <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4 rounded-lg border bg-white p-6 shadow-sm">
+        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
-          className="w-full rounded border px-3 py-2"
+          className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10"
           required
         />
         <input
@@ -51,12 +51,12 @@ export default function SignInPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
-          className="w-full rounded border px-3 py-2"
+          className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10"
           required
         />
         <button
           type="submit"
-          className="w-full rounded bg-black text-white py-2 disabled:opacity-50"
+          className="w-full rounded-md bg-black text-white py-2 text-sm hover:bg-black/90 disabled:opacity-50"
           disabled={loading}
         >
           {loading ? 'Signing in…' : 'Sign in'}

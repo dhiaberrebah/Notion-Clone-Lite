@@ -1,12 +1,11 @@
-import { cookies } from 'next/headers';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createSupabaseRSCClient } from '@/lib/supabase/server';
 
 export async function getSession() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createSupabaseRSCClient();
   return supabase.auth.getSession();
 }
 
 export async function getUser() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createSupabaseRSCClient();
   return supabase.auth.getUser();
 }
