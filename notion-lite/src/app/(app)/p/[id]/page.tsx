@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getPageById, listChildren, updatePage, createPage, deletePage } from "@/lib/db/pages";
 import TipTapEditor from "@/components/editor/TipTapEditor";
+import FormWithToast from "@/components/ui/FormWithToast";
 export default async function PageDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const page = await getPageById(id);
@@ -96,11 +97,14 @@ export default async function PageDetails({ params }: { params: Promise<{ id: st
             </span>
           ))}
         </nav>
-        <form action={deleteAction}>
-          <button type="submit" className="inline-flex items-center rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">Delete</button>
-        </form>
+        <FormWithToast success="Page deleted">
+          <form action={deleteAction}>
+            <button type="submit" className="inline-flex items-center rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">Delete</button>
+          </form>
+        </FormWithToast>
       </div>
 
+      <FormWithToast success="Title saved">
       <form action={updateTitle} className="space-y-2">
         <label className="block text-sm text-gray-600">Title</label>
         <input
@@ -111,7 +115,9 @@ export default async function PageDetails({ params }: { params: Promise<{ id: st
         />
         <button type="submit" className="inline-flex items-center rounded-md bg-black text-white px-3 py-1.5 text-sm hover:bg-black/90">Save title</button>
       </form>
+      </FormWithToast>
 
+      <FormWithToast success="Sharing updated">
       <form action={toggleShare} className="space-y-2 rounded-lg border bg-white p-3">
         <div className="flex items-center gap-2">
           <input id="is_public" name="is_public" type="checkbox" defaultChecked={!!page.is_public} />
@@ -124,6 +130,7 @@ export default async function PageDetails({ params }: { params: Promise<{ id: st
         )}
         <button type="submit" className="inline-flex items-center rounded-md bg-black text-white px-3 py-1.5 text-sm hover:bg-black/90">Update sharing</button>
       </form>
+      </FormWithToast>
 
       <div className="space-y-2">
         <label className="block text-sm text-gray-600">Content</label>
@@ -149,10 +156,12 @@ export default async function PageDetails({ params }: { params: Promise<{ id: st
             ))}
           </ul>
         )}
-        <form action={createChildAction} className="flex items-center gap-2">
-          <input name="childTitle" placeholder="New sub-page title" className="flex-1 rounded-md border bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10" />
-          <button type="submit" className="inline-flex items-center rounded-md bg-black text-white px-3 py-2 text-sm hover:bg-black/90">Create</button>
-        </form>
+        <FormWithToast success="Sub-page created">
+          <form action={createChildAction} className="flex items-center gap-2">
+            <input name="childTitle" placeholder="New sub-page title" className="flex-1 rounded-md border bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10" />
+            <button type="submit" className="inline-flex items-center rounded-md bg-black text-white px-3 py-2 text-sm hover:bg-black/90">Create</button>
+          </form>
+        </FormWithToast>
       </section>
     </div>
   );

@@ -3,6 +3,7 @@ import { createSupabaseActionClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import FormWithToast from "@/components/ui/FormWithToast";
 
 export default async function Home() {
   const pages = await listRootPages();
@@ -52,19 +53,21 @@ export default async function Home() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium">Create a page</h2>
-        <form action={create} className="flex items-center gap-2">
-          <input
-            name="title"
-            placeholder="Page title"
-            className="flex-1 rounded-md border px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
-          />
-          <button
-            type="submit"
-            className="inline-flex items-center rounded-md bg-black text-white px-3 py-2 text-sm hover:bg-black/90"
-          >
-            Create
-          </button>
-        </form>
+        <FormWithToast success="Page created">
+          <form action={create} className="flex items-center gap-2">
+            <input
+              name="title"
+              placeholder="Page title"
+              className="flex-1 rounded-md border px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center rounded-md bg-black text-white px-3 py-2 text-sm hover:bg-black/90"
+            >
+              Create
+            </button>
+          </form>
+        </FormWithToast>
       </section>
     </main>
   );
